@@ -374,22 +374,3 @@ pub fn hlt_loop() -> ! {
         x86_64::instructions::hlt();
     }
 }
-
-
-#[cfg(test)]
-kernel!(test_kernel_main);
-#[cfg(test)]
-fn test_kernel_main(boot_info: &'static BootInfo) -> ! {
-    init(boot_info);
-    test_main();
-    hlt_loop();
-}
-#[cfg(test)]
-#[panic_handler]
-fn panic(info: &PanicInfo) -> ! {
-    test_panic_handler(info)
-}
-#[alloc_error_handler]
-fn alloc_error_handler(layout: alloc::alloc::Layout) -> ! {
-    panic!("allocation error: {:?}", layout)
-}
