@@ -374,3 +374,8 @@ pub fn hlt_loop() -> ! {
         x86_64::instructions::hlt();
     }
 }
+
+#[alloc_error_handler]
+fn alloc_error_handler(layout: alloc::alloc::Layout) -> ! {
+    panic!("allocation error: {:?}", layout)
+}
