@@ -94,8 +94,8 @@ fn panic(info: &std3::panic::PanicInfo) -> ! {
 extern crate rinux_macros as pm;
 #[stable(feature = "rinuxcore", since = "0.1.23")]
 pub use pm::main;
-#[stable(feature = "rinuxcore_std3", since = "0.1.23")]
 
+#[stable(feature = "rinuxcore_std3", since = "0.1.23")]
 #[macro_use]
 pub extern crate std3;
 #[stable(feature = "rinuxcore", since = "0.1.23")]
@@ -158,7 +158,7 @@ pub(crate) static mut CONFIG: conf::Config = conf::Config::cnst();
 #[stable(feature = "rinuxcore", since = "0.1.23")]
 static mut TEST_MODE: BuildType = BuildType::Debug;
 #[stable(feature = "rinuxcore", since = "0.1.23")]
-static mut VERSION: &'static str = "v1.3.1-pre1 ";
+static mut VERSION: &'static str = "v1.3.1";
 #[stable(feature = "rinuxcore", since = "0.1.23")]
 const AUTHORS: &'static str = "Atomic";
 #[stable(feature = "rinuxcore", since = "0.1.23")]
@@ -228,7 +228,7 @@ pub unsafe fn __core_init(){
         TEST_MODE = BuildType::Debug;
     } else {
         TEST_MODE = BuildType::Release;
-        VERSION = "v1.3.0-RELEASE";
+        VERSION = "v1.3.1-RELEASE";
     }
 
     vga_buffer::__set_init_rinux(print_init);
