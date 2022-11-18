@@ -32,13 +32,12 @@ license = "MIT"
 [features]
 default = ["epearl"]
 full = ["default", "x86_64"]
+
+screen = []
 x86_64 = []
 
 
 epearl = []
-
-pureos = []
-custom = []
 
 
 [dependencies]
