@@ -22,25 +22,39 @@
 // SOFTWARE.
 //
 
+//! Custom configuration for the kernel.
+
+#[doc(hidden)]
 mod file;
 
+/// Specifies the location to load the configuration from.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[unstable(feature = "rinuxcore_custom_config", issue = "none")]
 pub enum ConfigType {
+    /// Loads the configuration from a file.
     File,
+    /// Loads the configuration from the environment.
     UserDefined(Config),
 }
 
+/// A Struct used for serializing the project's configuration.
 #[unstable(feature = "rinuxcore_custom_config", issue = "none")]
-#[derive(Debug, Default, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Config {
+    /// The name of the project.
     pub project_name: &'static str,
+
+    /// The version of the project.
     pub project_version: &'static str,
+
+    /// If the project should boot quietly.
+    /// Set to false if you are building a library.
     pub quiet_boot: bool,
 }
 
 #[unstable(feature = "rinuxcore_custom_config", issue = "none")]
 impl Config {
-    // #[rustc_const_stable(feature = "rinuxcore", since = "0.1.23")]
+    /// Creates a new constant empty mutable config
     pub const fn cnst() -> Self {
         Config {
             project_name: "",
@@ -49,7 +63,7 @@ impl Config {
         }
     }
 
-    // #[stable(feature = "rinuxcore", since = "0.1.23")]
+    /// Creates a new constant mutable config
     pub const fn new(
         project_name: &'static str,
         project_version: &'static str,

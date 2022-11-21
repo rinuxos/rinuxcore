@@ -22,16 +22,22 @@
 // SOFTWARE.
 //
 
+//! Simple task executor, used for backwards compatibility
+//! use the `executor` module for a better task executor
+
 use super::Task;
 use std3::collections::VecDeque;
 use std3::task::{Context, Poll, RawWaker, RawWakerVTable, Waker};
 
+/// Simple task executor
 #[unstable(feature = "rinuxcore_task", issue = "none")]
+#[derive(Debug)]
 pub struct SimpleExecutor {
     task_queue: VecDeque<Task>,
 }
 
 impl SimpleExecutor {
+    /// Create a new simple executor
     #[unstable(feature = "rinuxcore_task", issue = "none")]
     pub fn new() -> SimpleExecutor {
         SimpleExecutor {
@@ -39,11 +45,13 @@ impl SimpleExecutor {
         }
     }
 
+    /// Spawn a new task
     #[unstable(feature = "rinuxcore_task", issue = "none")]
     pub fn spawn(&mut self, task: Task) {
         self.task_queue.push_back(task)
     }
 
+    /// Run all tasks in the queue
     #[unstable(feature = "rinuxcore_task", issue = "none")]
     pub fn run(&mut self) {
         while let Some(mut task) = self.task_queue.pop_front() {

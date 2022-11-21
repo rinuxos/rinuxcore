@@ -22,6 +22,8 @@
 // SOFTWARE.
 //
 
+//! Keyboard utilities
+
 use crate::{print, print_err, vga_buffer::print_ok};
 use conquer_once::spin::OnceCell;
 use std3::{
@@ -50,12 +52,15 @@ pub(crate) fn add_scancode(scancode: u8) {
     }
 }
 
+/// Keyboard presses stream
 #[unstable(feature = "rinuxcore_keyboard", issue = "none")]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ScancodeStream {
     _private: (),
 }
 
 impl ScancodeStream {
+    /// Create a new scancode stream
     #[unstable(feature = "rinuxcore_keyboard", issue = "none")]
     pub fn new() -> Self {
         match SCANCODE_QUEUE.try_init_once(|| ArrayQueue::new(100)) {
@@ -99,6 +104,7 @@ impl Stream for ScancodeStream {
     }
 }
 
+/// Used if you want to see the keys pressed beeing printed to the screen
 #[unstable(feature = "rinuxcore_keyboard", issue = "none")]
 pub async fn print_keypresses() {
     let mut scancodes = ScancodeStream::new();
@@ -118,6 +124,7 @@ pub async fn print_keypresses() {
     }
 }
 
+/// Used if you want to just load the keyboard driver (fixes a bug which caused a crash if a keyboard signal was sent before the keyboard driver was loaded)
 #[unstable(feature = "rinuxcore_keyboard", issue = "none")]
 pub async fn init() {
     let _ = ScancodeStream::new();

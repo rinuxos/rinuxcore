@@ -22,6 +22,8 @@
 // SOFTWARE.
 //
 
+//! Tasking utilities
+
 use std3::boxed::Box;
 use std3::{
     future::Future,
@@ -37,6 +39,7 @@ pub mod keyboard;
 #[unstable(feature = "rinuxcore_task", issue = "none")]
 pub mod simple_executor;
 
+/// Task, includes a future and a task ID
 #[unstable(feature = "rinuxcore_task", issue = "none")]
 pub struct Task {
     id: TaskId,
@@ -44,6 +47,7 @@ pub struct Task {
 }
 
 impl Task {
+    /// Create a new task
     #[unstable(feature = "rinuxcore_task", issue = "none")]
     pub fn new(future: impl Future<Output = ()> + 'static) -> Task {
         Task {
@@ -54,6 +58,48 @@ impl Task {
 
     fn poll(&mut self, context: &mut Context) -> Poll<()> {
         self.future.as_mut().poll(context)
+    }
+
+    fn int(&self) -> u64 {
+        self.id.0
+    }
+}
+use std3::fmt::{Debug, Formatter, Error as FmtError};
+impl Debug for Task {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), FmtError> {
+        write!(f, "Task {{ id: {} }}", self.id.0)
+    }
+}
+impl PartialEq for Task {
+    fn eq(&self, other: &Self) -> bool {
+        self.int() == other.int()
+    }
+
+    fn ne(&self, other: &Self) -> bool {
+        self.int() != other.int()
+    }
+}
+impl Eq for Task {}
+impl PartialOrd for Task {
+    fn partial_cmp(&self, other: &Self) -> Option<std3::cmp::Ordering> {
+        self.int().partial_cmp(&other.int())
+    }
+    fn ge(&self, other: &Self) -> bool {
+        self.int() >= other.int()
+    }
+    fn gt(&self, other: &Self) -> bool {
+        self.int() > other.int()
+    }
+    fn le(&self, other: &Self) -> bool {
+        self.int() <= other.int()
+    }
+    fn lt(&self, other: &Self) -> bool {
+        self.int() < other.int()
+    }
+}
+impl Ord for Task {
+    fn cmp(&self, other: &Self) -> std3::cmp::Ordering {
+        self.int().cmp(&other.int())
     }
 }
 

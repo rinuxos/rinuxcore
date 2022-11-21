@@ -22,10 +22,15 @@
 // SOFTWARE.
 //
 
+#[doc(hidden)]
 use std3::__reexports::lazy_static::lazy_static;
+#[doc(hidden)]
 use std3::ops::{Deref, DerefMut};
+#[doc(hidden)]
 use std3::__reexports::volatile::Volatile;
+#[doc(hidden)]
 pub use std3::fmt::{self,Write};
+#[doc(hidden)]
 use std3::sync::Mutex;
 
 lazy_static! {
@@ -76,29 +81,44 @@ lazy_static! {
 
 
 
-
+/// A VGA color.
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
 pub enum Color {
+    /// Black.
     Black = 0,
+    /// Blue.
     Blue = 1,
+    /// Green.
     Green = 2,
+    /// Cyan.
     Cyan = 3,
+    /// Red.
     Red = 4,
+    /// Magenta.
     Magenta = 5,
+    /// Brown.
     Brown = 6,
+    /// Light Gray.
     LightGray = 7,
+    /// Dark Gray.
     DarkGray = 8,
+    /// Light Blue.
     LightBlue = 9,
+    /// Light Green.
     LightGreen = 10,
+    /// Light Cyan.
     LightCyan = 11,
+    /// Light Red.
     LightRed = 12,
-    Pink = 13,
+    /// Light Magenta.
+    LightMagenta = 13,
+    /// Yellow.
     Yellow = 14,
+    /// White.
     White = 15,
 }
-
 
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -145,16 +165,20 @@ const BUFFER_WIDTH: usize = 80;
 
 
 #[repr(transparent)]
+#[derive(Debug, Clone)]
 struct Buffer {
     chars: [[Volatile<ScreenChar>; BUFFER_WIDTH]; BUFFER_HEIGHT],
 }
 
+/// A writer that writes to the VGA text buffer.
+#[derive(Debug)]
 pub struct Writer {
     column_position: usize,
     color_code: ColorCode,
     buffer: &'static mut Buffer,
 }
 impl Writer {
+    /// Writes a byte character to the screen
     pub fn write_byte(&mut self, byte: u8) {
         match byte {
             b'\n' => self.new_line(),

@@ -27,8 +27,8 @@ use lazy_static::lazy_static;
 use std3::sync::Mutex;
 use uart_16550::SerialPort;
 
-#[stable(feature = "rinuxcore", since = "0.1.23")]
 lazy_static! {
+    #[stable(feature = "rinuxcore", since = "0.1.23")]
     pub(crate) static ref SERIAL1: Mutex<SerialPort> = {
         let mut serial_port = unsafe { SerialPort::new(0x3F8) };
         serial_port.init();

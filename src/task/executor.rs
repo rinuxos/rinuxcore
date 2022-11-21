@@ -22,13 +22,17 @@
 // SOFTWARE.
 //
 
+//! Executor for running tasks
+
 use std3::__reexports::x86_64;
 use super::{Task, TaskId};
 use std3::{collections::BTreeMap, sync::Arc, task::Wake};
 use std3::task::{Context, Poll, Waker};
 use crossbeam_queue::ArrayQueue;
 
+/// Executor for running tasks
 #[unstable(feature = "rinuxcore_task", issue = "none")]
+#[derive(Debug)]
 pub struct Executor {
     tasks: BTreeMap<TaskId, Task>,
     task_queue: Arc<ArrayQueue<TaskId>>,
@@ -37,6 +41,7 @@ pub struct Executor {
 
 impl Executor {
     #[unstable(feature = "rinuxcore_task", issue = "none")]
+    /// Create a new executor
     pub fn new() -> Self {
         Executor {
             tasks: BTreeMap::new(),
@@ -46,6 +51,7 @@ impl Executor {
     }
 
     #[unstable(feature = "rinuxcore_task", issue = "none")]
+    /// Spawn a new task
     pub fn spawn(&mut self, task: Task) {
         let task_id = task.id;
         if self.tasks.insert(task.id, task).is_some() {
@@ -55,6 +61,7 @@ impl Executor {
     }
 
     #[unstable(feature = "rinuxcore_task", issue = "none")]
+    /// Run all tasks in the executor
     pub fn run(&mut self) -> ! {
         loop {
             self.run_ready_tasks();

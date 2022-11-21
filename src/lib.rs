@@ -86,6 +86,10 @@ fn panic(info: &std3::panic::PanicInfo) -> ! {
 #![reexport_test_harness_main = "test_main"]
 #![allow(unused_attributes)]
 
+#![warn(unused)]
+#![deny(missing_debug_implementations)]
+#![deny(missing_docs)]
+
 
 
 
@@ -104,7 +108,7 @@ pub use std3::__bootloader::bootloader::BootInfo;
 use std3::panic::PanicInfo;
 #[stable(feature = "rinuxcore", since = "0.1.23")]
 use memory::BootInfoFrameAllocator;
-#[stable(feature = "rinuxcore", since = "0.1.23")]
+#[unstable(feature = "rinuxcore_custom_config", issue = "none")]
 pub mod conf;
 #[stable(feature = "rinuxcore", since = "0.1.23")]
 extern crate alloc;
@@ -175,7 +179,9 @@ const RINUX_ART: &'static str = r#"######   ###  #     #  #     #  #     #
 #[stable(feature = "rinuxcore", since = "0.1.23")]
 #[derive(Debug, Clone, Copy)]
 pub enum ConfigType {
+    /// File Configuration
     File,
+    /// User Configuration
     Custom(conf::Config),
 }
 
@@ -313,6 +319,7 @@ fn print_init(){
 /// Useful for testing
 #[stable(feature = "rinuxcore", since = "0.1.23")]
 pub trait Testable {
+    /// Runs the test
     #[stable(feature = "rinuxcore", since = "0.1.23")]
     fn run(&self) -> ();
 }
@@ -353,7 +360,9 @@ pub fn test_panic_handler(info: &PanicInfo) -> ! {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u32)]
 pub enum QemuExitCode {
+    /// Everything is fine
     Success = 0x10,
+    /// Something went wrong
     Failed = 0x11,
 }
 

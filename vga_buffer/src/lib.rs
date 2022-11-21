@@ -22,36 +22,48 @@
 // SOFTWARE.
 //
 
+//! A library for basic screen output.
+
 #![no_std]
 #![feature(custom_test_frameworks)]
 #![recursion_limit = "512"]
 #![feature(std3_reexports)]
+
+#![warn(unused)]
+#![deny(missing_debug_implementations)]
+#![deny(missing_docs)]
+
 use std3::__reexports::x86_64::instructions::interrupts;
 mod writers;
 pub use writers::*;
 
 
+/// Prints a string to the screen, appending a newline.
 #[macro_export]
 macro_rules! println {
     ()=>($crate::print!("\n"));
     ($($arg:tt)*)=>($crate::print!("{}\n",format_args!($($arg)*)));
 }
 
+/// Prints a string to the screen.
 #[macro_export]
 macro_rules! print {
     ($($arg:tt)*)=>($crate::_print(format_args!($($arg)*)));
 }
 
+/// Prints a green string to the screen, appending a newline.
 #[macro_export]
 macro_rules! print_ok {
     ($($arg:tt)*)=>($crate::_print_ok(format_args!($($arg)*)));
 }
 
+/// Prints a red string to the screen, appending a newline.
 #[macro_export]
 macro_rules! print_err {
     ($($arg:tt)*)=>($crate::_print_err(format_args!($($arg)*)));
 }
 
+/// Prints a magenta string to the screen, appending a newline.
 #[macro_export]
 macro_rules! print_info {
     ($($arg:tt)*)=>($crate::_print_info(format_args!($($arg)*)));
@@ -105,7 +117,9 @@ pub fn _print_info(args: fmt::Arguments) {
 pub fn __set_init_rinux(f: fn()) {
     unsafe { RINUX_INIT_FN = Some(f) };
 }
+#[doc(hidden)]
 static mut RINUX_INIT_FN: Option<fn()> = None;
+#[doc(hidden)]
 pub fn __init_rinux() {
     match unsafe { RINUX_INIT_FN } {
         Some(f) => f(),

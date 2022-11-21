@@ -1,5 +1,14 @@
+//! Macros for rinux.
+
 #![no_std]
-extern crate alloc;use alloc::{format,string::{ToString,String}};
+
+#![warn(unused)]
+#![deny(missing_debug_implementations)]
+#![deny(missing_docs)]
+
+
+extern crate alloc;
+use alloc::{format,string::{ToString,String}};
 extern crate proc_macro;
 use proc_macro as pm;
 
