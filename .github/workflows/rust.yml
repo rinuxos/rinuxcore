@@ -10,7 +10,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout rinuxcore
+      uses: actions/checkout@v3
+      with:
+        path: 'rinuxcore'
+    - name: Checkout std3
+      uses: actions/checkout@v3
+      with:
+        repository: AtomicGamer9523/std3
+        path: 'std3'
+    - name: Checkout config
+      uses: actions/checkout@v3
+      with:
+        repository: AtomicGamer9523/rinuxconfig
+        path: 'config'
     - name: Build
       run: cargo build --verbose
     - name: Run tests
@@ -19,7 +32,20 @@ jobs:
   clippy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout rinuxcore
+        uses: actions/checkout@v3
+        with:
+          path: 'rinuxcore'
+      - name: Checkout std3
+        uses: actions/checkout@v3
+        with:
+          repository: AtomicGamer9523/std3
+          path: 'std3'
+      - name: Checkout config
+        uses: actions/checkout@v3
+        with:
+          repository: AtomicGamer9523/rinuxconfig
+          path: 'config'
       - run: rustup component add clippy
       - uses: actions-rs/clippy-check@v1
         with:
