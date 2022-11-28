@@ -1,0 +1,8 @@
+[package]
+name = "composer"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+lazy_static = { path = "../../std3/lazy_static" }

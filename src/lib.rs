@@ -144,6 +144,12 @@ pub extern crate vga_buffer;
 #[unstable(feature = "rinuxcore_vga_buffer", issue = "none")]
 pub use vga_buffer::{print,println,print_err};
 
+#[unstable(feature = "rinuxcore_composer", issue = "none")]
+#[cfg(feature = "composer")]
+#[allow(unused_imports)]
+#[macro_use]
+pub extern crate composer;
+
 
 #[stable(feature = "rinuxcore", since = "0.1.23")]
 #[repr(u8)]
@@ -210,6 +216,7 @@ pub fn set_config_type(config_type: ConfigType) {
 }
 
 
+/// Needed for printing core info to the screen
 #[doc(hidden)]
 #[stable(feature = "rinuxcore", since = "0.1.23")]
 pub unsafe fn __core_init(){
@@ -244,7 +251,7 @@ pub unsafe fn __core_init(){
 
 /// Initializes the std3 of Rinux
 #[stable(feature = "rinuxcore", since = "0.1.23")]
-pub fn  init(boot_info: &'static BootInfo) {
+pub fn init(boot_info: &'static BootInfo) {
     unsafe {
         if CONFIGURED != true {
             __core_init()

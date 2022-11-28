@@ -69,6 +69,12 @@ macro_rules! print_info {
     ($($arg:tt)*)=>($crate::_print_info(format_args!($($arg)*)));
 }
 
+/// Prints a magenta string to the screen, appending a newline.
+#[macro_export]
+macro_rules! print_to_line {
+    ($line:expr, $($arg:tt)*)=>($crate::_print_to_line($line, format_args!($($arg)*)));
+}
+
 
 
 

@@ -29,30 +29,35 @@ authors = ["AtomicGamer9523@github.com"]
 edition = "2018"
 license = "MIT"
 
+[[test]]
+name = "vga"
+path = "tests/vga.rs"
+
 [features]
 default = ["epearl"]
-full = ["default", "x86_64"]
+full = ["default", "x86_64", "composer"]
 
 screen = []
 x86_64 = []
 
 
 epearl = []
+composer = ["dep:composer"]
 
 
 [dependencies]
+composer = { path = "./composer", package = "composer", optional = true }
 rinux_macros = { path = "./rinux_macros", package = "rinux_macros" }
 vga_buffer = { path = "./vga_buffer", package = "vga_buffer" }
 epearl = { path = "./enderpearl", package = "enderpearl" }
+pic8259 = { path = "./pic8259", package = "pic8259" }
 config = { path = "../config", package = "config" }
+std3 = { path = "../std3", features = ["full"] }
 linked_list_allocator = "0.9.0"
 pc-keyboard = "0.5.0"
-pic8259 = "0.10.1"
 
 [dependencies.crossbeam-queue]
-version = "0.2.1"
-default-features = false
-features = ["alloc"]
+path = "./crossbeam-queue"
 
 [dependencies.conquer-once]
 version = "0.2.0"
@@ -62,12 +67,6 @@ default-features = false
 version = "0.3.4"
 default-features = false
 features = ["alloc"]
-
-[dependencies.std3]
-path = "../std3"
-features = ["full"]
-version = "0.1.23"
-
 
 
 [package.metadata.bootimage]
