@@ -156,9 +156,9 @@ impl DerefMut for ScreenChar {
 }
 
 
-
+const BUFFER_WIDTH:  usize = 81;
 const BUFFER_HEIGHT: usize = 25;
-const BUFFER_WIDTH: usize = 80;
+
 
 
 
