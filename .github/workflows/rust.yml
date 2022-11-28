@@ -29,6 +29,11 @@ jobs:
       with:
         repository: AtomicGamer9523/rinuxconfig
         path: 'config'
+    - name: Checkout Bootloader
+      uses: actions/checkout@v3
+      with:
+        repository: AtomicGamer9523/bootloader
+        path: 'bootloader'
     - run: rustup target add x86_64-unknown-linux-gnu
     - run: rustup toolchain add nightly
     - run: rustup component add clippy --toolchain nightly-x86_64-unknown-linux-gnu
@@ -59,6 +64,11 @@ jobs:
         with:
           repository: AtomicGamer9523/rinuxconfig
           path: 'config'
+      - name: Checkout Bootloader
+        uses: actions/checkout@v3
+        with:
+          repository: AtomicGamer9523/bootloader
+          path: 'bootloader'
       - run: rustup target add x86_64-unknown-linux-gnu
       - run: rustup toolchain add nightly
       - run: rustup component add clippy --toolchain nightly-x86_64-unknown-linux-gnu
