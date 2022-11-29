@@ -1,6 +1,7 @@
 #![no_std]
 
 
+#[doc(hidden)]
 use core::fmt::{
     Result as FmtResult,
     Formatter,
@@ -32,11 +33,15 @@ impl Job {
 macro_rules! job {
     ( $name: ident ) => { job!($name=||{core::panic!("Hello World!")}); };
     ( $name: ident = $body: expr ) => {
-        lazy_static::lazy_static!(
+        rinuxcore::composer::__lazy!(
             static ref func: fn() -> () = $body;
-            static ref $name: composer::Job = composer::Job::new(*func);
+            static ref $name: rinuxcore::composer::Job = rinuxcore::composer::Job::new(*func);
         );
     };
     () => ()
 }
 
+
+/// Nedded for the macro
+#[doc(hidden)]
+pub use lazy_static::lazy_static as __lazy;

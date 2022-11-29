@@ -30,7 +30,32 @@ use std3::{collections::BTreeMap, sync::Arc, task::Wake};
 use std3::task::{Context, Poll, Waker};
 use crossbeam_queue::ArrayQueue;
 
-/// Executor for running tasks
+/// Executor for running tasks.
+/// Make sure you enable the feature:
+/// ```rust
+/// #![feature(rinuxcore_task)]
+/// ```
+/// Basic usage:
+/// ```rust
+/// use rinuxcore::{
+///     println,
+///     task::{executor::Executor, Task},
+///     BootInfo
+/// };
+///
+/// #[rinuxcore::main]
+/// fn kernel_main(boot_info: &'static BootInfo) -> ! {
+///     rinuxcore::init(&boot_info);
+/// 
+///     let mut executor = Executor::new();
+///     executor.spawn(Task::new(main()));
+///     executor.run()
+/// }
+///
+/// async fn main() {
+///     println!("Hello World");
+/// }
+/// ```
 #[unstable(feature = "rinuxcore_task", issue = "none")]
 #[derive(Debug)]
 pub struct Executor {
@@ -44,8 +69,9 @@ impl Default for Executor {
     }
 }
 impl Executor {
+    /// Create a new executor instance.
+    /// Has a default size of 100 tasks.
     #[unstable(feature = "rinuxcore_task", issue = "none")]
-    /// Create a new executor
     pub fn new() -> Self {
         Executor {
             tasks: BTreeMap::new(),
@@ -54,8 +80,8 @@ impl Executor {
         }
     }
 
-    #[unstable(feature = "rinuxcore_task", issue = "none")]
     /// Spawn a new task
+    #[unstable(feature = "rinuxcore_task", issue = "none")]
     pub fn spawn(&mut self, task: Task) {
         let task_id = task.id;
         if self.tasks.insert(task.id, task).is_some() {
@@ -64,8 +90,8 @@ impl Executor {
         self.task_queue.push(task_id).expect("queue full");
     }
 
-    #[unstable(feature = "rinuxcore_task", issue = "none")]
     /// Run all tasks in the executor
+    #[unstable(feature = "rinuxcore_task", issue = "none")]
     pub fn run(&mut self) -> ! {
         loop {
             self.run_ready_tasks();
@@ -73,29 +99,85 @@ impl Executor {
         }
     }
 
-    fn run_ready_tasks(&mut self) {
+    /// Runs first task in the executor's queue.
+    /// Useful when you want to run initailization tasks
+    /// 
+    /// Example:
+    /// 
+    /// ```rust
+    /// #![no_std]
+    /// #![no_main]
+    /// #![feature(custom_test_frameworks)]
+    /// #![test_runner(rinuxcore::test_runner)]
+    /// #![reexport_test_harness_main = "test_main"]
+    ///
+    /// // Rinuxcore features
+    /// #![feature(rinuxcore_task)]
+    /// #![feature(rinuxcore_keyboard)]
+    ///
+    ///
+    /// use rinuxcore::{
+    ///     task::{executor::Executor, Task},
+    ///     BootInfo,
+    ///     println,
+    ///     std3
+    /// };
+    ///
+    /// #[rinuxcore::main]
+    /// fn kernel_main(boot_info: &'static BootInfo) -> ! {
+    ///     rinuxcore::init(&boot_info);// Initializes Rinux
+    ///     let mut executor = Executor::new();// Creates new Task Executor
+    ///
+    ///     // Built-in keyboard driver, requires "rinuxcore_keyboard" feature
+    ///     executor.spawn(Task::new(rinuxcore::task::keyboard::init()));
+    ///     executor.run_first_task_in_queue();
+    ///     executor.spawn(Task::new(main()));
+    ///     executor.run()
+    /// }
+    ///
+    /// async fn main() {
+    ///     println!("Hello World");
+    /// }
+    ///
+    /// #[panic_handler]
+    /// fn panic(info: &std3::panic::PanicInfo) -> ! {
+    ///     rinuxcore::print_err!("{}", info);
+    ///     rinuxcore::hlt_loop();
+    /// }
+    /// ```
+    #[unstable(feature = "rinuxcore_task", issue = "none")]
+    pub fn run_first_task_in_queue(&mut self) -> () {
+        let task_id = self.task_queue.pop().expect("queue empty");
+        self.run_task(task_id);
+    }
+
+
+    fn run_task(&mut self, task_id: TaskId) -> () {
         let Self {
             tasks,
             task_queue,
             waker_cache,
         } = self;
-
-        while let Ok(task_id) = task_queue.pop() {
-            let task = match tasks.get_mut(&task_id) {
-                Some(task) => task,
-                None => continue,
-            };
-            let waker = waker_cache
-                .entry(task_id)
-                .or_insert_with(|| TaskWaker::new(task_id, task_queue.clone()));
-            let mut context = Context::from_waker(waker);
-            match task.poll(&mut context) {
-                Poll::Ready(()) => {
-                    tasks.remove(&task_id);
-                    waker_cache.remove(&task_id);
-                }
-                Poll::Pending => {}
+        let task = match tasks.get_mut(&task_id) {
+            Some(task) => task,
+            None => return,
+        };
+        let waker = waker_cache
+            .entry(task_id)
+            .or_insert_with(|| TaskWaker::new(task_id, task_queue.clone()));
+        let mut context = Context::from_waker(waker);
+        match task.poll(&mut context) {
+            Poll::Ready(()) => {
+                tasks.remove(&task_id);
+                waker_cache.remove(&task_id);
             }
+            Poll::Pending => {}
+        }
+    }
+
+    fn run_ready_tasks(&mut self) {
+        while let Ok(task_id) = self.task_queue.pop() {
+            self.run_task(task_id);
         }
     }
 
