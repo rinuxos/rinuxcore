@@ -39,8 +39,7 @@ lazy_static! {
             static mut STACK: [u8; STACK_SIZE] = [0; STACK_SIZE];
 
             let stack_start = VirtAddr::from_ptr(unsafe { &STACK });
-            let stack_end = stack_start + STACK_SIZE;
-            stack_end
+            stack_start + STACK_SIZE
         };
         tss
     };
@@ -74,7 +73,7 @@ pub(crate) fn init() {
     unsafe {
         CS::set_reg(GDT.1.code_selector);
         load_tss(GDT.1.tss_selector);
-        if crate::CONFIG.quiet_boot != true {
+        if !crate::CONFIG.quiet_boot {
             print_ok!("[OK] GDT initialized\n");
         }
     }

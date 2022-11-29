@@ -4,7 +4,7 @@
 //!
 //! The basic idea here is that we have two PIC chips, PIC1 and PIC2, and
 //! that PIC2 is slaved to interrupt 2 on PIC 1.  You can find the whole
-//! story at http://wiki.osdev.org/PIC (as usual).  Basically, our
+//! story at <http://wiki.osdev.org/PIC> (as usual).  Basically, our
 //! immensely sophisticated modern chipset is engaging in early-80s
 //! cosplay, and our goal is to do the bare minimum required to get
 //! reasonable interrupts.

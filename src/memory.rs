@@ -33,7 +33,7 @@ use x86_64::{
 
 pub(crate) unsafe fn init(physical_memory_offset: VirtAddr) -> OffsetPageTable<'static> {
     let level_4_table = active_level_4_table(physical_memory_offset);
-    if crate::CONFIG.quiet_boot != true {
+    if !crate::CONFIG.quiet_boot {
         print_ok!("[OK] RAM initialized\n");
     };
     OffsetPageTable::new(level_4_table, physical_memory_offset)
@@ -66,7 +66,7 @@ pub(crate) struct BootInfoFrameAllocator {
 
 impl BootInfoFrameAllocator {
     pub(crate) unsafe fn init(memory_map: &'static MemoryMap) -> Self {
-        if crate::CONFIG.quiet_boot != true {
+        if !crate::CONFIG.quiet_boot {
             print_ok!("[OK] BootInfoFrameAllocator initialized\n");
         };
         BootInfoFrameAllocator {

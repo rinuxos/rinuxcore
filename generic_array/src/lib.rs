@@ -69,6 +69,9 @@
 #![deny(meta_variable_misuse)]
 #![no_std]
 
+#[doc(hidden)]
+pub(crate) extern crate std3;
+
 pub extern crate typenum;
 
 mod hex;

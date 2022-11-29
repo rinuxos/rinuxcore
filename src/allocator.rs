@@ -66,7 +66,7 @@ pub(crate) fn init_heap(
 
     unsafe {
         ALLOCATOR.lock().init(HEAP_START, HEAP_SIZE);
-        if crate::CONFIG.quiet_boot != true {
+        if !crate::CONFIG.quiet_boot {
             print_ok!("[OK] Heap allocation successful\n");
         };
     }

@@ -168,11 +168,11 @@ pub(crate) static mut CONFIG: conf::Config = conf::Config::cnst();
 #[stable(feature = "rinuxcore", since = "0.1.23")]
 static mut TEST_MODE: BuildType = BuildType::Debug;
 #[stable(feature = "rinuxcore", since = "0.1.23")]
-static mut VERSION: &'static str = "v1.3.1";
+static mut VERSION: & str = "v1.3.1";
 #[stable(feature = "rinuxcore", since = "0.1.23")]
-const AUTHORS: &'static str = "Atomic";
+const AUTHORS: &str = "Atomic";
 #[stable(feature = "rinuxcore", since = "0.1.23")]
-const RINUX_ART: &'static str = r#"######   ###  #     #  #     #  #     #
+const RINUX_ART: &str = r#"######   ###  #     #  #     #  #     #
 #     #   #   ##    #  #     #   #   #
 #     #   #   # #   #  #     #    # #
 ######    #   #  #  #  #     #     #
@@ -220,7 +220,7 @@ pub fn set_config_type(config_type: ConfigType) {
 #[doc(hidden)]
 #[stable(feature = "rinuxcore", since = "0.1.23")]
 pub unsafe fn __core_init(){
-    if CONFIGURED != true {
+    if !CONFIGURED {
         set_config_type(ConfigType::File);
     }
 
@@ -306,14 +306,12 @@ fn print_init(){
             } else {
                 panic!("Invalid BuildType");
             }
+        } else if TEST_MODE == BuildType::Debug {
+            vga_buffer::_print_warn(format_args!("Rinux Version: {}\n", VERSION));
+        } else if TEST_MODE == BuildType::Release {
+            panic!("Please match VERSION and ENV.BUILD_TYPE");
         } else {
-            if TEST_MODE == BuildType::Debug {
-                vga_buffer::_print_warn(format_args!("Rinux Version: {}\n", VERSION));
-            } else if TEST_MODE == BuildType::Release {
-                panic!("Please match VERSION and ENV.BUILD_TYPE");
-            } else {
-                panic!("Invalid BuildType");
-            }
+            panic!("Invalid BuildType");
         }
 
         vga_buffer::_print_logo(format_args!(
@@ -328,7 +326,7 @@ fn print_init(){
 pub trait Testable {
     /// Runs the test
     #[stable(feature = "rinuxcore", since = "0.1.23")]
-    fn run(&self) -> ();
+    fn run(&self);
 }
 
 #[stable(feature = "rinuxcore", since = "0.1.23")]
