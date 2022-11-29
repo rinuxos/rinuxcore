@@ -22,15 +22,6 @@ Example:
 #[rinuxcore::main]
 fn kernel_main(boot_info: &'static BootInfo) -> ! {
     rinuxcore::init(&boot_info);// Initializes Rinux
-    let mut executor = Executor::new();// Creates new Task Executor
-
-    executor.spawn(Task::new(rinuxcore::task::keyboard::init()));// Built-in keyboard driver
-    executor.spawn(Task::new(main()));
-
-    executor.run()
-}
-
-async fn main() {
     println!("Hello World");
 }
 ```
