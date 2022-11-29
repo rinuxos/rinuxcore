@@ -74,10 +74,6 @@ impl PartialEq for Task {
     fn eq(&self, other: &Self) -> bool {
         self.int() == other.int()
     }
-
-    fn ne(&self, other: &Self) -> bool {
-        self.int() != other.int()
-    }
 }
 impl Eq for Task {}
 impl PartialOrd for Task {

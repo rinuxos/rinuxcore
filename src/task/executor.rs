@@ -38,7 +38,11 @@ pub struct Executor {
     task_queue: Arc<ArrayQueue<TaskId>>,
     waker_cache: BTreeMap<TaskId, Waker>,
 }
-
+impl Default for Executor {
+    fn default() -> Self {
+        Self::new()
+    }
+}
 impl Executor {
     #[unstable(feature = "rinuxcore_task", issue = "none")]
     /// Create a new executor
@@ -112,6 +116,7 @@ struct TaskWaker {
 }
 
 impl TaskWaker {
+    #[allow(clippy::new_ret_no_self)]
     fn new(task_id: TaskId, task_queue: Arc<ArrayQueue<TaskId>>) -> Waker {
         Waker::from(Arc::new(TaskWaker {
             task_id,

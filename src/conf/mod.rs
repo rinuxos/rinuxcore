@@ -80,12 +80,11 @@ impl Config {
     pub(crate) fn get_config(self, config_type: ConfigType) -> Self {
         match config_type {
             ConfigType::File => { unsafe {
-                let res = Config {
+                Config {
                     project_name: file::PROJECT_NAME,
                     project_version: file::PROJECT_VERSION,
                     quiet_boot: file::QUIET_BOOT,
-                };
-                res
+                }
             }},
             ConfigType::UserDefined(data) => data
         }

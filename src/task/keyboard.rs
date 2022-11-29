@@ -42,7 +42,7 @@ static WAKER: AtomicWaker = AtomicWaker::new();
 
 pub(crate) fn add_scancode(scancode: u8) {
     if let Ok(queue) = SCANCODE_QUEUE.try_get() {
-        if let Err(_) = queue.push(scancode) {
+        if queue.push(scancode).is_err() {
             print_err!("[ERR] scancode queue full; dropping keyboard input\n");
         } else {
             WAKER.wake();
@@ -53,6 +53,7 @@ pub(crate) fn add_scancode(scancode: u8) {
 }
 
 /// Keyboard presses stream
+#[allow(clippy::new_without_default)]
 #[unstable(feature = "rinuxcore_keyboard", issue = "none")]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ScancodeStream {
@@ -66,7 +67,7 @@ impl ScancodeStream {
         match SCANCODE_QUEUE.try_init_once(|| ArrayQueue::new(100)) {
             Ok(_) => {
                 unsafe {
-                    if crate::CONFIG.quiet_boot != true {
+                    if !crate::CONFIG.quiet_boot {
                         print_ok!("[OK] Scancode initialized\n");
                     };
                 };
@@ -93,7 +94,7 @@ impl Stream for ScancodeStream {
             return Poll::Ready(Some(scancode));
         }
 
-        WAKER.register(&cx.waker());
+        WAKER.register(cx.waker());
         match queue.pop() {
             Ok(scancode) => {
                 WAKER.take();

@@ -71,7 +71,7 @@ lazy_static! {
 pub(crate) fn init_idt() {
     IDT.load();
     unsafe {
-        if crate::CONFIG.quiet_boot != true {
+        if !crate::CONFIG.quiet_boot {
             print_ok!("[OK] IDT initialized\n");
         }
     }
