@@ -15,5 +15,7 @@ default = ["nightly"]
 nightly = ["x86_64/inline_asm"]
 stable = ["x86_64/external_asm"]
 
-[dependencies]
-x86_64 = { path = "../../bootloader/x86_64", default-features = false, features = ["instructions"] }
+[dependencies.x86_64]
+path = "../../memutils/x86_64"
+default-features = false
+features = ["instructions"]

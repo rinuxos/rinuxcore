@@ -23,7 +23,7 @@
 # 
 
 [unstable]
-build-std = ["core", "compiler_builtins", "alloc"]
+build-std = ["core", "compiler_builtins", "alloc", "test"]
 build-std-features = ["compiler-builtins-mem"]
 
 [build]

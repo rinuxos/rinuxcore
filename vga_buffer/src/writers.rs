@@ -23,7 +23,7 @@
 //
 
 #[doc(hidden)]
-use std3::__reexports::lazy_static::lazy_static;
+use std3::lazy_static;
 #[doc(hidden)]
 use std3::ops::{Deref, DerefMut};
 #[doc(hidden)]

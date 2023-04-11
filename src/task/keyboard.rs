@@ -90,17 +90,17 @@ impl Stream for ScancodeStream {
             .try_get()
             .expect("scancode queue not initialized");
 
-        if let Ok(scancode) = queue.pop() {
+        if let Some(scancode) = queue.pop() {
             return Poll::Ready(Some(scancode));
         }
 
         WAKER.register(cx.waker());
         match queue.pop() {
-            Ok(scancode) => {
+            Some(scancode) => {
                 WAKER.take();
                 Poll::Ready(Some(scancode))
             }
-            Err(crossbeam_queue::PopError) => Poll::Pending,
+            None => Poll::Pending,
         }
     }
 }
@@ -109,7 +109,7 @@ impl Stream for ScancodeStream {
 #[unstable(feature = "rinuxcore_keyboard", issue = "none")]
 pub async fn print_keypresses() {
     let mut scancodes = ScancodeStream::new();
-    let mut keyboard = Keyboard::new(layouts::Us104Key, ScancodeSet1, HandleControl::Ignore);
+    let mut keyboard = new_keyboard();
 
     while let Some(scancode) = scancodes.next().await {
         if let Ok(Some(key_event)) = keyboard.add_byte(scancode) {
@@ -125,9 +125,14 @@ pub async fn print_keypresses() {
     }
 }
 
+/// Builds a new Keyboard
+const fn new_keyboard() -> Keyboard<layouts::Us104Key, ScancodeSet1> {
+    Keyboard::new(ScancodeSet1::new(), layouts::Us104Key, HandleControl::Ignore)
+}
+
 /// Used if you want to just load the keyboard driver (fixes a bug which caused a crash if a keyboard signal was sent before the keyboard driver was loaded)
 #[unstable(feature = "rinuxcore_keyboard", issue = "none")]
 pub async fn init() {
     let _ = ScancodeStream::new();
-    let _ = Keyboard::new(layouts::Us104Key, ScancodeSet1, HandleControl::Ignore);
+    let _ = new_keyboard();
 }

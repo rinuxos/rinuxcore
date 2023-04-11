@@ -176,7 +176,7 @@ impl Executor {
     }
 
     fn run_ready_tasks(&mut self) {
-        while let Ok(task_id) = self.task_queue.pop() {
+        while let Some(task_id) = self.task_queue.pop() {
             self.run_task(task_id);
         }
     }

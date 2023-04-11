@@ -7,7 +7,6 @@ more_lengths = []
 
 [dependencies.std3]
 path = "../../std3"
-version = "0.1.23"
 
 [dependencies]
 typenum = { version = "1.12", features = ["no_std"]}
